@@ -26,8 +26,8 @@
 	
 	
 	var url_part1 = domain + service + "?fields=name,gender,email,languages,birthday,religion,interests,location&access_token="+access_token;
-	var url_part2 = domain+service+"?access_token"+access_token+"?fields=photos.limit(5),cover";
-	var url_part3 = domain+service+"?access_token"+access_token+"?fields=events.fields(attending),likes,friends,relationship_status";
+	var url_part2 = domain+service+"?fields=photos.limit(5),cover&access_token="+access_token;
+	var url_part3 = domain+service+"?fields=events.fields(attending.limit(0)),likes,friends,relationship_status&access_token="+access_token;;
 	// Render in application
 	$(document).ready(function() {
 
@@ -40,7 +40,7 @@
 				var array = data["languages"];
 				var birthday = data["birthday"];
 				var religion = data["religion"];
-				var interests =data["interests"];
+				var interests =data["interests"]["data"];
 				var address = data["location"]["name"];
 				if(!name)
 				{
@@ -78,8 +78,9 @@
 				}
 				$("#content").append("<br>Religion :"+ religion + "<br/>");
 				$("#content").append("<br>Interests : <br/>");
+				
 				$(interests).each(function(a){
-				$("#content").append("<br>            "+ interests[a] + "<br/>");
+				$("#content").append("<br>"+ interests[a]["name"] + "<br/>");
 				});
 				
 			});
@@ -87,20 +88,33 @@
 		$("#my_button2").click(function(){
 		$.getJSON(url_part2, function(data) {
 				var photoArray = data["photos"]["data"]; 
+				var cov = data
 					$(photoArray).each(function(i){
-					alert("tangina");
 						var picture	= "<img src=" + photoArray[i]["source"] + ">";
+						var person = photoArray[i]["from"]["name"];
+						$("#content").append("<br>Posted by: " + person + "</br>");
 						$("#content").append("<br>" + picture + "</br>");
+						
 			});
+			
 		});
 	});
 	$("#my_button3").click(function(){
 		$.getJSON(url_part3, function(data) {
-				var eventArray = data["events"]; 
-					$(photoArray).each(function(i){
-					alert("tangina");
-						var picture	= "<img src=" + photoArray[i]["source"] + ">";
-						$("#content").append("<br>" + picture + "</br>");
+				var event = data["events"]["data"]["name"]; 
+				var likesArray = data["likes"]["data"];
+				var friendsArray = data["friends"]["data"];
+				$("#content").append("<br>Latest Attended Event :"+ event + "<br/>");
+					$(likesArray).each(function(i){
+						var like	= likesArray[i]["name"];
+						$("#content").append("<br>Likes :" +"</br>");
+						$("#content").append("<br>" + like + "</br>");
+			});
+			$("#content").append("<br>Latest Attended Event :"+ event + "<br/>");
+					$(friendsArray).each(function(i){
+						var friend	= friendsArray[i]["name"];
+						$("#content").append("<br>Friends :" +"</br>");
+						$("#content").append("<br>" + friend + "</br>");
 			});
 		});
 	});
