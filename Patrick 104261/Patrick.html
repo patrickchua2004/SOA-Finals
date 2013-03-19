@@ -23,13 +23,11 @@
 	var profile_id = "1682637430";
 	var service = "/" + profile_id;
 	var access_token = "AAACEdEose0cBAACYPbXfA9WLspC7En1KlFOpxsBh1DFpgTEDZCwFT33ZApuTuuyU5OP9SILWprKukHmRinjtKBq9ZArP102XHa0TZBFl71WsOTjafUeY";
-	var access_token2 = "AAACEdEose0cBAACYPbXfA9WLspC7En1KlFOpxsBh1DFpgTEDZCwFT33ZApuTuuyU5OP9SILWprKukHmRinjtKBq9ZArP102XHa0TZBFl71WsOTjafUeY";
 	
 	
-	var url_part1 = domain+service+"?access_token"+access_token+
-	"?fields=name,gender,email,languages,birthday,religion,interests,location"
-	;
-	var url_part2 = domain+service+"?access_token"+access_token2+"?fields=photos.limit(5),cover";
+	var url_part1 = domain + service + "?fields=name,gender,email,languages,birthday,religion,interests,location&access_token="+access_token;
+	var url_part2 = domain+service+"?access_token"+access_token+"?fields=photos.limit(5),cover";
+	var url_part3 = domain+service+"?access_token"+access_token+"?fields=events.fields(attending),likes,friends,relationship_status";
 	// Render in application
 	$(document).ready(function() {
 
@@ -43,7 +41,7 @@
 				var birthday = data["birthday"];
 				var religion = data["religion"];
 				var interests =data["interests"];
-				var address = data["location"];
+				var address = data["location"]["name"];
 				if(!name)
 				{
 				name = "N/A";
@@ -88,7 +86,17 @@
 		});
 		$("#my_button2").click(function(){
 		$.getJSON(url_part2, function(data) {
-				var photoArray = data["photos"]; 
+				var photoArray = data["photos"]["data"]; 
+					$(photoArray).each(function(i){
+					alert("tangina");
+						var picture	= "<img src=" + photoArray[i]["source"] + ">";
+						$("#content").append("<br>" + picture + "</br>");
+			});
+		});
+	});
+	$("#my_button3").click(function(){
+		$.getJSON(url_part3, function(data) {
+				var eventArray = data["events"]; 
 					$(photoArray).each(function(i){
 					alert("tangina");
 						var picture	= "<img src=" + photoArray[i]["source"] + ">";
